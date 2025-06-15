@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: crud
     ports:
-      - "5433:5432"
+      - "5434:5432"
     networks:
       - backend
 
@@ -17,12 +17,15 @@ services:
     container_name: springboot_app
     ports:
       - "8080:8080"
+      - "5005:5005"
     depends_on:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/crud
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      SPRING_APPLICATION_JSON: '{"debug":true}'
     networks:
       - backend
 

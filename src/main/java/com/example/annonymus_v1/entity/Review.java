@@ -1,5 +1,6 @@
 package com.example.annonymus_v1.entity;
 
+import com.example.annonymus_v1.enumurator.ReviewType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class Review {
     private String description;
     private Long rating;
     private Long instituteId;
+    private Long reviewType;
+    private String title;
 
     @Column(columnDefinition = "timestamp")
     private LocalDateTime createdAt;

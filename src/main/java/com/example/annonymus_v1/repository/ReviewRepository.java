@@ -14,11 +14,14 @@ import java.util.UUID;
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
     @Query("""
-    SELECT NEW com.example.annonymus_v1.dto.ReviewDto(
+    SELECT new com.example.annonymus_v1.dto.ReviewDto(
+        review.id,
+        review.title,
         review.description,
         review.rating,
-        institute.id,
+        review.instituteId,
         institute.name,
+        review.reviewType,
         review.createdAt,
         review.updatedAt,
         review.deleted
@@ -26,7 +29,8 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
     FROM Review review
     JOIN Institute institute ON review.instituteId = institute.id
     WHERE review.deleted = FALSE or review.deleted IS NULL
-    order by review.createdAt desc
+    ORDER BY review.createdAt DESC
 """)
     Page<ReviewDto> findAllByDeletedIsFalse(Pageable pageable);
+
 }

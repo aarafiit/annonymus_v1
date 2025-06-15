@@ -14,6 +14,8 @@ public class ReviewMapper {
         dto.setDescription(review.getDescription());
         dto.setInstituteId(review.getInstituteId());
         dto.setRating(review.getRating());
+        dto.setReviewType(review.getReviewType());
+        dto.setTitle(review.getTitle());
         dto.setCreatedAt(review.getCreatedAt());
         dto.setUpdatedAt(review.getUpdatedAt());
         dto.setDeleted(review.getDeleted());
@@ -29,6 +31,8 @@ public class ReviewMapper {
         review.setInstituteId(dto.getInstituteId());
         review.setDescription(dto.getDescription());
         review.setRating(dto.getRating());
+        review.setReviewType(dto.getReviewType());
+        review.setTitle(dto.getTitle());
         review.setCreatedAt(dto.getCreatedAt());
         review.setUpdatedAt(dto.getUpdatedAt());
         review.setDeleted(dto.getDeleted());

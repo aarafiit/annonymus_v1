@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,14 +16,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReviewDto {
 
-    private Long id;
-    @Size(min = 10, max = 255)
+    private UUID id;
     private String title;
     private String description;
     private Long rating;
     private Long instituteId;
     private String instituteName;
-    private ReviewType reviewType;
+    private Long reviewType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean deleted;
