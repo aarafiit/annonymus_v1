@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin("http://localhost:4200")
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewController {

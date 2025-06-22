@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin("http://localhost:4200")
 @RequiredArgsConstructor
 @Slf4j
 public class InstituteController {
