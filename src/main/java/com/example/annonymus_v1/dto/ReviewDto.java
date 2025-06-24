@@ -19,10 +19,13 @@ public class ReviewDto {
     private UUID id;
     private String title;
     private String description;
-    private Long rating;
+    private Long totalRatingSum;
     private Long instituteId;
     private String instituteName;
     private Long reviewType;
+    private Long likeCount;
+    private Long dislikeCount;
+    private Long NumberOfRating;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean deleted;

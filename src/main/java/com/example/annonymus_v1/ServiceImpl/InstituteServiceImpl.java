@@ -2,6 +2,7 @@ package com.example.annonymus_v1.ServiceImpl;
 
 import com.example.annonymus_v1.dto.InstituteDto;
 import com.example.annonymus_v1.entity.Institute;
+import com.example.annonymus_v1.exception.BaseTranslatableRuntimeException;
 import com.example.annonymus_v1.mapper.InstituteMapper;
 import com.example.annonymus_v1.repository.InstituteRepository;
 import com.example.annonymus_v1.service.InstituteService;
@@ -28,7 +29,11 @@ public class InstituteServiceImpl implements InstituteService {
                     .toList();
         }
         else {
-            throw new RuntimeException("No institutes found");
+            throw new BaseTranslatableRuntimeException(
+                    "no.universities.found",
+                    "No universities found for the given search parameter",
+                    null
+                    );
         }
     }
 }

@@ -12,13 +12,12 @@ import java.util.List;
 public interface InstituteRepository extends JpaRepository<Institute, Long> {
 
     @Query("""
-        SELECT model
-        FROM Institute model
-        WHERE (model.name ILIKE CONCAT('%', :searchParam, '%')
-               OR model.alias ILIKE CONCAT('%', :searchParam, '%'))
-          AND model.deleted = FALSE
-        ORDER BY model.name,model.alias
-        
-""")
+            SELECT model
+            FROM Institute model
+            WHERE (model.name ILIKE CONCAT('%', :searchParam, '%')
+                   OR model.alias ILIKE CONCAT('%', :searchParam, '%'))
+              AND (model.deleted = FALSE OR model.deleted IS NULL)
+            ORDER BY model.name,model.alias
+            """)
     List<Institute> getAllInstitutes(@Param("searchParam") String searchParam);
 }

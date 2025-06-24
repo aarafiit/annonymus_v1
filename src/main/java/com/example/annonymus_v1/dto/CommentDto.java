@@ -2,22 +2,19 @@ package com.example.annonymus_v1.dto;
 
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InstituteDto {
-    private Long id;
-    private String name;
-    private String website;
-    private String alias;
+public class CommentDto {
+    private UUID reviewId;
+    private String comment;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean deleted;

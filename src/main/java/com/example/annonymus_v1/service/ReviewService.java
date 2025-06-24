@@ -8,11 +8,15 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ReviewService {
-    Page<ReviewDto> getAllReviews(Pageable pageable);
+    Page<ReviewDto> getAllReviews(String searchParam,Pageable pageable);
 
     ReviewDto createReview(ReviewDto reviewDto);
 
     ReviewDto getReviewById(UUID id);
 
     void deleteReviewById(UUID id);
+
+    ReviewDto likeReview(UUID id);
+
+    ReviewDto dislikeReview(UUID id);
 }

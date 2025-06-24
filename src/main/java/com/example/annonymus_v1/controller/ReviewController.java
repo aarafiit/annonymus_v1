@@ -23,11 +23,12 @@ public class ReviewController {
     @GetMapping("/reviews")
     public ResponseEntity<Page<ReviewDto>> getAllReviews(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String searchParam
 
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ReviewDto> reviewPage = reviewService.getAllReviews(pageable);
+        Page<ReviewDto> reviewPage = reviewService.getAllReviews(searchParam,pageable);
         return ResponseEntity.ok(reviewPage);
     }
 
@@ -39,6 +40,16 @@ public class ReviewController {
     @GetMapping("/reviews/{id}")
     public ReviewDto getReviewById(@PathVariable UUID id) {
         return reviewService.getReviewById(id);
+    }
+
+    @PostMapping("/reviews/{id}/like")
+    public ReviewDto likeReview(@PathVariable UUID id) {
+        return reviewService.likeReview(id);
+    }
+
+    @PostMapping("/reviews/{id}/dislike")
+    public ReviewDto dislikeReview(@PathVariable UUID id) {
+        return reviewService.dislikeReview(id);
     }
 
     @DeleteMapping("/reviews/{id}")

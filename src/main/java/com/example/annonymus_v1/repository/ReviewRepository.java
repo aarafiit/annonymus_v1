@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -14,23 +15,34 @@ import java.util.UUID;
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
     @Query("""
-    SELECT new com.example.annonymus_v1.dto.ReviewDto(
-        review.id,
-        review.title,
-        review.description,
-        review.rating,
-        review.instituteId,
-        institute.name,
-        review.reviewType,
-        review.createdAt,
-        review.updatedAt,
-        review.deleted
-    )
-    FROM Review review
-    JOIN Institute institute ON review.instituteId = institute.id
-    WHERE review.deleted = FALSE or review.deleted IS NULL
-    ORDER BY review.createdAt DESC
-""")
-    Page<ReviewDto> findAllByDeletedIsFalse(Pageable pageable);
+                SELECT new com.example.annonymus_v1.dto.ReviewDto(
+                    review.id,
+                    review.title,
+                    review.description,
+                    review.totalRatingSum,
+                    review.instituteId,
+                    institute.name,
+                    review.reviewType,
+                    review.likeCount,
+                    review.dislikeCount,
+                    review.NumberOfRating,
+                    review.createdAt,
+                    review.updatedAt,
+                    review.deleted
+                )
+                FROM Review review
+                JOIN Institute institute ON review.instituteId = institute.id
+                WHERE (review.deleted = FALSE OR review.deleted IS NULL)
+                  AND (
+                      LOWER(institute.name) LIKE LOWER(CONCAT('%', :searchParam, '%')) OR
+                      LOWER(institute.alias) LIKE LOWER(CONCAT('%', :searchParam, '%'))
+                  )
+                ORDER BY review.createdAt DESC
+            """)
+    Page<ReviewDto> findAllByDeletedIsFalse(
+            @Param("searchParam") String searchParam,
+            Pageable pageable
+    );
+
 
 }

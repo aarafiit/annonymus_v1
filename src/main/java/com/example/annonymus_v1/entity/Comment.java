@@ -1,34 +1,25 @@
 package com.example.annonymus_v1.entity;
 
-import com.example.annonymus_v1.enumurator.ReviewType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "reviews")
-public class Review {
-
+@Table(name = "comments")
+public class Comment {
     @Id
     private UUID id;
-    private String description;
-    private Long totalRatingSum;
-    private Long instituteId;
-    private Long reviewType;
-    private String title;
-    private Long likeCount;
-    private Long dislikeCount;
-    private Long NumberOfRating;
+    private UUID reviewId;
+    private String comment;
 
     @Column(columnDefinition = "timestamp")
     private LocalDateTime createdAt;
@@ -37,7 +28,7 @@ public class Review {
     private LocalDateTime updatedAt;
 
     @ColumnDefault("false")
-    private Boolean deleted;
+    private Boolean deleted = Boolean.FALSE;
 
     @PrePersist
     protected void onCreate() {
@@ -45,17 +36,11 @@ public class Review {
             this.id = UUID.randomUUID();
         }
         this.createdAt = this.updatedAt = LocalDateTime.now();
-        this.deleted = false;
-        this.likeCount = 0L;
-        this.dislikeCount = 0L;
-        this.NumberOfRating = 0L;
-        this.totalRatingSum = 0L;
     }
+
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-
 }
