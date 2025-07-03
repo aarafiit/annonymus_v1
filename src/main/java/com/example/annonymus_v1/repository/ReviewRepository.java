@@ -21,13 +21,11 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
                     review.id,
                     review.title,
                     review.description,
-                    review.totalRatingSum,
                     review.instituteId,
                     institute.name,
                     review.reviewType,
                     review.likeCount,
                     review.dislikeCount,
-                    review.NumberOfRating,
                     review.createdAt,
                     review.updatedAt,
                     review.deleted

@@ -21,14 +21,13 @@ public class Review {
 
     @Id
     private UUID id;
+    @Column(length = 1000)
     private String description;
-    private Long totalRatingSum;
     private Long instituteId;
     private Long reviewType;
     private String title;
     private Long likeCount;
     private Long dislikeCount;
-    private Long NumberOfRating;
 
     @Column(columnDefinition = "timestamp")
     private LocalDateTime createdAt;
@@ -48,8 +47,6 @@ public class Review {
         this.deleted = false;
         this.likeCount = 0L;
         this.dislikeCount = 0L;
-        this.NumberOfRating = 0L;
-        this.totalRatingSum = 0L;
     }
 
     @PreUpdate
