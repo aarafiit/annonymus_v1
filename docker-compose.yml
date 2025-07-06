@@ -13,6 +13,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - backend
+  # Redis service (NEW)
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - backend
+    restart: unless-stopped
 
   app:
     build:
@@ -31,6 +43,10 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
+
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_TIMEOUT: 2000ms
     volumes:
         - ./:/my-project
     networks:
@@ -41,3 +57,4 @@ networks:
 
 volumes:
   postgres_data:  # This declares the volume for persistence
+  redis_data:

@@ -7,6 +7,10 @@ import com.example.annonymus_v1.mapper.ReviewMapper;
 import com.example.annonymus_v1.repository.ReviewRepository;
 import com.example.annonymus_v1.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,14 +21,16 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
 
     @Override
-    public Page<ReviewDto> getAllReviews(String searchParam,Pageable pageable) {
-
-        Page<ReviewDto> reviewList =  reviewRepository.findAllByDeletedIsFalse(searchParam,pageable);
+    @Cacheable(value = "reviews", key = "#searchParam + '_' + #pageable.pageNumber + '_' + #pageable.pageSize")
+    public Page<ReviewDto> getAllReviews(String searchParam, Pageable pageable) {
+        log.info("Fetching reviews from database with search param: {} and page: {}", searchParam, pageable.getPageNumber());
+        Page<ReviewDto> reviewList = reviewRepository.findAllByDeletedIsFalse(searchParam, pageable);
 
         if(!reviewList.isEmpty()) {
             return reviewList;
@@ -36,8 +42,11 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
+
     @Override
+    @CacheEvict(value = {"reviews", "analytics"}, allEntries = true)
     public ReviewDto createReview(ReviewDto reviewDto) {
+        log.info("Creating new review and clearing cache");
         if(reviewDto.getInstituteId() == null) {
             throw new BaseTranslatableRuntimeException(
                     "institute.id.missing",
@@ -76,7 +85,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Cacheable(value = "review", key = "#id")
     public ReviewDto getReviewById(UUID id) {
+        log.info("Fetching review from database with id: {}", id);
         Optional<Review> review = reviewRepository.findById(id);
         if (review.isPresent()) {
             return ReviewMapper.toDto(review.get());
@@ -91,7 +102,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @CacheEvict(value = {"review", "reviews", "analytics"}, key = "#id")
     public void deleteReviewById(UUID id) {
+        log.info("Deleting review with id: {} and clearing cache", id);
         Optional<Review> review = reviewRepository.findById(id);
         if (review.isPresent()) {
             review.get().setDeleted(true);
@@ -107,7 +120,10 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @CachePut(value = "review", key = "#id")
+    @CacheEvict(value = {"reviews", "analytics"}, allEntries = true)
     public ReviewDto likeReview(UUID id) {
+        log.info("Liking review with id: {} and updating cache", id);
         Optional<Review> review = reviewRepository.findById(id);
         if (review.isPresent()) {
             Review reviewEntity = review.get();
@@ -125,7 +141,10 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @CachePut(value = "review", key = "#id")
+    @CacheEvict(value = {"reviews", "analytics"}, allEntries = true)
     public ReviewDto dislikeReview(UUID id) {
+        log.info("Disliking review with id: {} and updating cache", id);
         Optional<Review> review = reviewRepository.findById(id);
         if (review.isPresent()) {
             Review reviewEntity = review.get();
