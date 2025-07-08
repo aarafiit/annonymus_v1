@@ -1,13 +1,16 @@
 package com.example.annonymus_v1.ServiceImpl;
 
 import com.example.annonymus_v1.dto.ReviewDto;
+import com.example.annonymus_v1.entity.Institute;
 import com.example.annonymus_v1.entity.Review;
 import com.example.annonymus_v1.exception.BaseTranslatableRuntimeException;
 import com.example.annonymus_v1.mapper.ReviewMapper;
+import com.example.annonymus_v1.repository.InstituteRepository;
 import com.example.annonymus_v1.repository.ReviewRepository;
 import com.example.annonymus_v1.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +23,12 @@ import java.util.UUID;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final InstituteRepository instituteRepository;
 
     @Override
-    public Page<ReviewDto> getAllReviews(String searchParam,Pageable pageable) {
+    public Page<ReviewDto> getAllReviews(String searchParam,int pageNumber,int PageSize) {
+
+        Pageable pageable = PageRequest.of(pageNumber,PageSize);
 
         Page<ReviewDto> reviewList =  reviewRepository.findAllByDeletedIsFalse(searchParam,pageable);
 
@@ -77,17 +83,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewDto getReviewById(UUID id) {
-        Optional<Review> review = reviewRepository.findById(id);
-        if (review.isPresent()) {
-            return ReviewMapper.toDto(review.get());
-        }
-        else {
+        Optional<ReviewDto> reviewDtoOptional = reviewRepository.getReviewDetailsById(id);
+        if (reviewDtoOptional.isEmpty()) {
             throw new BaseTranslatableRuntimeException(
                     "review.not.found",
                     "Review with ID %s not found".formatted(id),
                     new Object[] {id}
             );
         }
+        return reviewDtoOptional.get();
     }
 
     @Override

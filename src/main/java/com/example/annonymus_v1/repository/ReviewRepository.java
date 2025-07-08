@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -72,4 +73,24 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
         """)
     List<com.example.annonymus_v1.dto.AnalyticsProjection> getAllAnalytics(@Param("searchParam") String searchParam);
 
+    @Query("""
+                SELECT new com.example.annonymus_v1.dto.ReviewDto(
+                    review.id,
+                    review.title,
+                    review.description,
+                    review.instituteId,
+                    institute.name,
+                    review.reviewType,
+                    review.likeCount,
+                    review.dislikeCount,
+                    review.createdAt,
+                    review.updatedAt,
+                    review.deleted
+                )
+                FROM Review review
+                JOIN Institute institute ON review.instituteId = institute.id
+                WHERE (review.deleted = FALSE OR review.deleted IS NULL)
+                AND review.id = :id
+            """)
+    Optional<ReviewDto> getReviewDetailsById(UUID id);
 }

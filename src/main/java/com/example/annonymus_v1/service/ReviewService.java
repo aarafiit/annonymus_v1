@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ReviewService {
-    Page<ReviewDto> getAllReviews(String searchParam,Pageable pageable);
+    Page<ReviewDto> getAllReviews(String searchParam,int pageNumber,int pageSize);
 
     ReviewDto createReview(ReviewDto reviewDto);
 

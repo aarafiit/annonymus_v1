@@ -25,10 +25,8 @@ public class ReviewController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String searchParam
-
     ) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ReviewDto> reviewPage = reviewService.getAllReviews(searchParam,pageable);
+        Page<ReviewDto> reviewPage = reviewService.getAllReviews(searchParam,page, size);
         return ResponseEntity.ok(reviewPage);
     }
 
