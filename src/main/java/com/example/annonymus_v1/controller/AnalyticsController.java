@@ -17,8 +17,10 @@ public class AnalyticsController {
 
     @GetMapping("/analytics")
     public List<AnalyticsDto> getAnalytics(
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "12") int pageSize,
             @RequestParam(required = false,defaultValue = "" ) String searchParam
     ) {
-        return analyticsService.getAnalytics(searchParam);
+        return analyticsService.getAnalytics(searchParam,pageNumber,pageSize);
     }
 }

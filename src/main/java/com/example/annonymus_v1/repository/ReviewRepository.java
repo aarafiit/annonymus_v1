@@ -71,7 +71,9 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
         ORDER BY
             totalReviews DESC
         """)
-    List<com.example.annonymus_v1.dto.AnalyticsProjection> getAllAnalytics(@Param("searchParam") String searchParam);
+    Page<com.example.annonymus_v1.dto.AnalyticsProjection> getAllAnalytics(
+            @Param("searchParam") String searchParam,
+            Pageable pageable);
 
     @Query("""
                 SELECT new com.example.annonymus_v1.dto.ReviewDto(
