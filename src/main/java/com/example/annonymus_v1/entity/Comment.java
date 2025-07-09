@@ -19,6 +19,7 @@ public class Comment {
     @Id
     private UUID id;
     private UUID reviewId;
+    @Column(length = 500)
     private String comment;
 
     @Column(columnDefinition = "timestamp")
