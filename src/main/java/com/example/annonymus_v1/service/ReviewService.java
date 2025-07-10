@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ReviewService {
-    Page<ReviewDto> getAllReviews(String searchParam,int pageNumber,int pageSize);
+    Page<ReviewDto> getAllReviews(String searchParam, int pageNumber, int pageSize);
 
     ReviewDto createReview(ReviewDto reviewDto);
 
@@ -19,4 +19,6 @@ public interface ReviewService {
     ReviewDto likeReview(UUID id);
 
     ReviewDto dislikeReview(UUID id);
+
+    boolean isLikedBefore(UUID id, String clientIdentifier,Boolean isLikeOrDislike);
 }

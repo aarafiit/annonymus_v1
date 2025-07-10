@@ -29,7 +29,7 @@ public class ReviewController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String searchParam
     ) {
-        Page<ReviewDto> reviewPage = reviewService.getAllReviews(searchParam,page, size);
+        Page<ReviewDto> reviewPage = reviewService.getAllReviews(searchParam, page, size);
         return ResponseEntity.ok(reviewPage);
     }
 
@@ -50,8 +50,14 @@ public class ReviewController {
             @RequestHeader("User-Agent") String userAgent,
             HttpServletRequest request) {
 
-        ResponseEntity<String> TOO_MANY_REQUESTS = isRequestTooMany(id, fingerprint, userAgent, request);
-        if (TOO_MANY_REQUESTS != null) return TOO_MANY_REQUESTS;
+        String ip = getClientIp(request);
+        String clientIdentifier = DigestUtils.sha256Hex(ip + userAgent + fingerprint);
+
+        boolean isLikedBefore = reviewService.isLikedBefore(id, clientIdentifier, true);
+        if (isLikedBefore) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body("You've already liked this review recently");
+        }
 
         ReviewDto reviewDto = reviewService.likeReview(id);
         return ResponseEntity.ok().build();
@@ -64,8 +70,14 @@ public class ReviewController {
             @RequestHeader("User-Agent") String userAgent,
             HttpServletRequest request) {
 
-        ResponseEntity<String> TOO_MANY_REQUESTS = isRequestTooMany(id, fingerprint, userAgent, request);
-        if (TOO_MANY_REQUESTS != null) return TOO_MANY_REQUESTS;
+        String ip = getClientIp(request);
+        String clientIdentifier = DigestUtils.sha256Hex(ip + userAgent + fingerprint);
+
+        boolean isLikedBefore = reviewService.isLikedBefore(id, clientIdentifier, false);
+        if (isLikedBefore) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body("You've already disliked this review recently");
+        }
 
         ReviewDto reviewDto = reviewService.dislikeReview(id);
         return ResponseEntity.ok().build();

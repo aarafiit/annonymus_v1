@@ -3,10 +3,12 @@ package com.example.annonymus_v1.ServiceImpl;
 import com.example.annonymus_v1.dto.ReviewDto;
 import com.example.annonymus_v1.entity.Institute;
 import com.example.annonymus_v1.entity.Review;
+import com.example.annonymus_v1.entity.UsersIp;
 import com.example.annonymus_v1.exception.BaseTranslatableRuntimeException;
 import com.example.annonymus_v1.mapper.ReviewMapper;
 import com.example.annonymus_v1.repository.InstituteRepository;
 import com.example.annonymus_v1.repository.ReviewRepository;
+import com.example.annonymus_v1.repository.UserIpRepository;
 import com.example.annonymus_v1.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final InstituteRepository instituteRepository;
+    private final UserIpRepository userIpRepository;
 
     @Override
     public Page<ReviewDto> getAllReviews(String searchParam,int pageNumber,int PageSize) {
@@ -143,5 +146,20 @@ public class ReviewServiceImpl implements ReviewService {
                     new Object[] {id}
             );
         }
+    }
+
+    @Override
+    public boolean isLikedBefore(UUID id, String clientIdentifier,Boolean likeOrDislike) {
+        Optional<UsersIp> isExists = userIpRepository.findByReviewIdAndUserIp(id, clientIdentifier);
+        if (isExists.isPresent() && isExists.get().getLike().equals(likeOrDislike)) {
+            return true;
+        }
+        UsersIp usersIp = UsersIp.builder()
+                .reviewId(id)
+                .userIp(clientIdentifier)
+                .like(likeOrDislike)
+                .build();
+        userIpRepository.save(usersIp);
+        return false;
     }
 }

@@ -21,7 +21,7 @@ public class InstituteController {
 
     @GetMapping("/institutes")
     public List<InstituteDto> getInstitutes(
-            @RequestParam(required = false,defaultValue = "" ) String searchParam
+            @RequestParam(required = false, defaultValue = "") String searchParam
     ) {
         return instituteService.getAllInstitutes(searchParam);
     }
