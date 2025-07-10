@@ -7,13 +7,11 @@ import com.example.annonymus_v1.service.ReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.UUID;
 
@@ -45,11 +43,6 @@ public class ReviewController {
         return reviewService.getReviewById(id);
     }
 
-   /* @PostMapping("/reviews/{id}/like")
-    public ReviewDto likeReview(@PathVariable UUID id) {
-        return reviewService.likeReview(id);
-    }*/
-
     @PostMapping("/reviews/{id}/like")
     public ResponseEntity<?> likePost(
             @PathVariable UUID id,
@@ -57,22 +50,38 @@ public class ReviewController {
             @RequestHeader("User-Agent") String userAgent,
             HttpServletRequest request) {
 
-        // Get client IP (consider proxy headers if behind load balancer)
-        String ip = getClientIp(request);
+        ResponseEntity<String> TOO_MANY_REQUESTS = isRequestTooMany(id, fingerprint, userAgent, request);
+        if (TOO_MANY_REQUESTS != null) return TOO_MANY_REQUESTS;
 
-        // Create unique client identifier
-        String clientIdentifier = DigestUtils.sha256Hex(ip + userAgent + fingerprint);
-
-        if (!rateLimitService.allowAction(id, clientIdentifier)) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body("You've already performed this action recently");
-        }
-
-        reviewService.likeReview(id);
-
+        ReviewDto reviewDto = reviewService.likeReview(id);
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/reviews/{id}/dislike")
+    public ResponseEntity<?> disLikePost(
+            @PathVariable UUID id,
+            @RequestHeader("X-Client-Fingerprint") String fingerprint,
+            @RequestHeader("User-Agent") String userAgent,
+            HttpServletRequest request) {
+
+        ResponseEntity<String> TOO_MANY_REQUESTS = isRequestTooMany(id, fingerprint, userAgent, request);
+        if (TOO_MANY_REQUESTS != null) return TOO_MANY_REQUESTS;
+
+        ReviewDto reviewDto = reviewService.dislikeReview(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/reviews/{id}")
+    public void deleteReviewById(@PathVariable UUID id) {
+        reviewService.deleteReviewById(id);
+    }
+
+    /**
+     * Extracts the client IP address from the request, considering common proxy headers.
+     *
+     * @param request the HttpServletRequest
+     * @return the client IP address as a String
+     */
     private String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
@@ -84,23 +93,10 @@ public class ReviewController {
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        return ip.split(",")[0]; // In case of multiple IPs, take the first one
+        return ip.split(",")[0];
     }
 
-
-
-   /* @PostMapping("/reviews/{id}/dislike")
-    public ReviewDto dislikeReview(@PathVariable UUID id) {
-        return reviewService.dislikeReview(id);
-    }*/
-
-    @PostMapping("/reviews/{id}/dislike")
-    public ResponseEntity<?> disLikePost(
-            @PathVariable UUID id,
-            @RequestHeader("X-Client-Fingerprint") String fingerprint,
-            @RequestHeader("User-Agent") String userAgent,
-            HttpServletRequest request) {
-
+    private ResponseEntity<String> isRequestTooMany(UUID id, String fingerprint, String userAgent, HttpServletRequest request) {
         // Get client IP (consider proxy headers if behind load balancer)
         String ip = getClientIp(request);
 
@@ -111,16 +107,7 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                     .body("You've already performed this action recently");
         }
-
-        reviewService.dislikeReview(id);
-
-        return ResponseEntity.ok().build();
-    }
-
-
-    @DeleteMapping("/reviews/{id}")
-    public void deleteReviewById(@PathVariable UUID id) {
-        reviewService.deleteReviewById(id);
+        return null;
     }
 
 }
