@@ -36,6 +36,14 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:7
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
 networks:
   backend:
 
