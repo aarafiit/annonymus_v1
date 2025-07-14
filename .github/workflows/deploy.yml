@@ -28,19 +28,19 @@ jobs:
 
       - name: SSH into Azure VM and deploy container
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }} << EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }} << 'EOF'
             docker pull ${{ secrets.DOCKER_USERNAME }}/springboot-app:latest
-          
+
             # Stop and remove old container if it exists
             docker stop springboot_app || true
             docker rm springboot_app || true
-          
+
             # Run new container
             docker run -d \
               --name springboot_app \
               --network annonymus_v1_backend \
               -p 8081:8080 \
-              -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5434/crud \  
+              -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5434/crud \
               -e SPRING_DATASOURCE_USERNAME=postgres \
               -e SPRING_DATASOURCE_PASSWORD=postgres \
               -e SPRING_PROFILES_ACTIVE=docker \
