@@ -40,7 +40,7 @@ jobs:
               --name springboot_app \
               --network annonymus_v1_backend \
               -p 8081:8080 \
-              -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5434/crud \
+              -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/crud \
               -e SPRING_DATASOURCE_USERNAME=postgres \
               -e SPRING_DATASOURCE_PASSWORD=postgres \
               -e SPRING_PROFILES_ACTIVE=docker \
