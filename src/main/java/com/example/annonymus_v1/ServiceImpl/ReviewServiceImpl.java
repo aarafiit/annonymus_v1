@@ -1,7 +1,6 @@
 package com.example.annonymus_v1.ServiceImpl;
 
 import com.example.annonymus_v1.dto.ReviewDto;
-import com.example.annonymus_v1.entity.Institute;
 import com.example.annonymus_v1.entity.Review;
 import com.example.annonymus_v1.entity.UsersIp;
 import com.example.annonymus_v1.exception.BaseTranslatableRuntimeException;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,43 +27,42 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserIpRepository userIpRepository;
 
     @Override
-    public Page<ReviewDto> getAllReviews(String searchParam,int pageNumber,int PageSize) {
+    public Page<ReviewDto> getAllReviews(String searchParam, int pageNumber, int PageSize) {
 
-        Pageable pageable = PageRequest.of(pageNumber,PageSize);
+        Pageable pageable = PageRequest.of(pageNumber, PageSize);
 
-        Page<ReviewDto> reviewList =  reviewRepository.findAllByDeletedIsFalse(searchParam,pageable);
+        Page<ReviewDto> reviewList = reviewRepository.findAllByDeletedIsFalse(searchParam, pageable);
 
-        if(!reviewList.isEmpty()) {
+        if (!reviewList.isEmpty()) {
             return reviewList;
-        }
-        else {
+        } else {
             throw new BaseTranslatableRuntimeException("no.reviews.found",
                     "No reviews found",
-                    new Object[] {searchParam});
+                    new Object[]{searchParam});
         }
     }
 
     @Override
     public ReviewDto createReview(ReviewDto reviewDto) {
-        if(reviewDto.getInstituteId() == null) {
+        if (reviewDto.getInstituteId() == null) {
             throw new BaseTranslatableRuntimeException(
                     "institute.id.missing",
                     "University name is required",
                     null);
         }
-        if(reviewDto.getTitle() == null || reviewDto.getTitle().isEmpty()) {
+        if (reviewDto.getTitle() == null || reviewDto.getTitle().isEmpty()) {
             throw new BaseTranslatableRuntimeException(
                     "review.text.missing",
                     "Review Title is required",
                     null);
         }
-        if(reviewDto.getDescription() == null || reviewDto.getDescription().isEmpty()) {
+        if (reviewDto.getDescription() == null || reviewDto.getDescription().isEmpty()) {
             throw new BaseTranslatableRuntimeException(
                     "review.description.missing",
                     "Review description is required",
                     null);
         }
-        if(reviewDto.getReviewType() == null) {
+        if (reviewDto.getReviewType() == null) {
             throw new BaseTranslatableRuntimeException(
                     "review.type.missing",
                     "Review type is required",
@@ -74,10 +71,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review reviewEntity = ReviewMapper.toEntity(reviewDto);
 
-        if(reviewEntity.getLikeCount() == null) {
+        if (reviewEntity.getLikeCount() == null) {
             reviewEntity.setLikeCount(0L);
-        }
-        else if(reviewEntity.getDislikeCount() == null) {
+        } else if (reviewEntity.getDislikeCount() == null) {
             reviewEntity.setDislikeCount(0L);
         }
         reviewEntity = reviewRepository.save(reviewEntity);
@@ -91,7 +87,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw new BaseTranslatableRuntimeException(
                     "review.not.found",
                     "Review with ID %s not found".formatted(id),
-                    new Object[] {id}
+                    new Object[]{id}
             );
         }
         return reviewDtoOptional.get();
@@ -103,12 +99,11 @@ public class ReviewServiceImpl implements ReviewService {
         if (review.isPresent()) {
             review.get().setDeleted(true);
             reviewRepository.save(review.get());
-        }
-        else {
+        } else {
             throw new BaseTranslatableRuntimeException(
                     "review.not.found",
                     "Review with ID %s not found".formatted(id),
-                    new Object[] {id}
+                    new Object[]{id}
             );
         }
     }
@@ -121,12 +116,11 @@ public class ReviewServiceImpl implements ReviewService {
             reviewEntity.setLikeCount(reviewEntity.getLikeCount() + 1);
             reviewRepository.save(reviewEntity);
             return ReviewMapper.toDto(reviewEntity);
-        }
-        else {
+        } else {
             throw new BaseTranslatableRuntimeException(
                     "review.not.found",
                     "Review with ID %s not found".formatted(id),
-                    new Object[] {id}
+                    new Object[]{id}
             );
         }
     }
@@ -143,13 +137,13 @@ public class ReviewServiceImpl implements ReviewService {
             throw new BaseTranslatableRuntimeException(
                     "review.not.found",
                     "Review with ID %s not found".formatted(id),
-                    new Object[] {id}
+                    new Object[]{id}
             );
         }
     }
 
     @Override
-    public boolean isLikedBefore(UUID id, String clientIdentifier,Boolean likeOrDislike) {
+    public boolean isLikedBefore(UUID id, String clientIdentifier, Boolean likeOrDislike) {
         Optional<UsersIp> isExists = userIpRepository.findByReviewIdAndUserIp(id, clientIdentifier);
         if (isExists.isPresent() && isExists.get().getLike().equals(likeOrDislike)) {
             return true;

@@ -48,4 +48,4 @@ networks:
   backend:
 
 volumes:
-  postgres_data:  # This declares the volume for persistence
+  postgres_data:
