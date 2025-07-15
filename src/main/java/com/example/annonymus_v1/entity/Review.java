@@ -21,7 +21,7 @@ public class Review {
 
     @Id
     private UUID id;
-    @Column(length = 1000)
+    @Column(length = 5000)
     private String description;
     private Long instituteId;
     private Long reviewType;
