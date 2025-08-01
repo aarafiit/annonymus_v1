@@ -11,6 +11,7 @@ public class ReviewMapper {
         }
 
         ReviewDto dto = new ReviewDto();
+        dto.setId(review.getId());
         dto.setDescription(review.getDescription());
         dto.setInstituteId(review.getInstituteId());
         dto.setReviewType(review.getReviewType());

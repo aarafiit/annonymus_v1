@@ -60,7 +60,7 @@ public class ReviewController {
         }
 
         ReviewDto reviewDto = reviewService.likeReview(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(reviewDto);
     }
 
     @PostMapping("/reviews/{id}/dislike")
@@ -80,7 +80,7 @@ public class ReviewController {
         }
 
         ReviewDto reviewDto = reviewService.dislikeReview(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(reviewDto);
     }
 
     @DeleteMapping("/reviews/{id}")
