@@ -20,19 +20,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private final ReviewRepository reviewRepository;
 
     @Override
-    public List<AnalyticsDto> getAnalytics(String searchParam,int pageNumber, int pageSize) {
+    public Page<AnalyticsProjection> getAnalytics(String searchParam,int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber,pageSize);
         Page<AnalyticsProjection> projections = reviewRepository.getAllAnalytics(searchParam, pageable);
-        return projections.stream().map(projection -> new AnalyticsDto(
-                projection.getInstituteId(),
-                projection.getInstituteName(),
-                projection.getTotalReviews(),
-                projection.getTotalPositiveReviews(),
-                projection.getTotalNegativeReviews(),
-                projection.getTotalMixedReviews(),
-                projection.getPositiveReviewPercentage(),
-                projection.getNegativeReviewPercentage(),
-                projection.getMixedReviewPercentage()
-        )).toList();
+        return projections;
     }
 }
