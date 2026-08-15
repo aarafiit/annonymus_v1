@@ -27,8 +27,7 @@ COPY . .
 RUN ./gradlew clean bootJar -x test --no-daemon
 
 # Use a lightweight JDK base for the final image
-FROM openjdk:17-jdk-slim
-
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copy the JAR from the builder stage
