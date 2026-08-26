@@ -1,12 +1,12 @@
 version: '3.8'
 services:
   db:
-    image: postgres:14
+    image: postgres:17
     container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: desi_kola
+      POSTGRES_DB: crud
     ports:
       - "5434:5432"
     volumes:
@@ -15,17 +15,14 @@ services:
       - backend
 
   app:
-    build:
-        context: .
-        dockerfile: Dockerfile
-    image: annonymus_v1
+    image: abdullahrafi/springboot-app:latest
     container_name: springboot_app
     ports:
       - "8081:8080"
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/desi_kola
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/crud
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: docker
