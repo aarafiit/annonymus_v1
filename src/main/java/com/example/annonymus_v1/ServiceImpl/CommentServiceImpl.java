@@ -37,8 +37,18 @@ public class CommentServiceImpl implements CommentService {
                     null
             );
         }
+        if (commentDto.getComment() == null || commentDto.getComment().isBlank()) {
+            throw new BaseTranslatableRuntimeException(
+                    "comment.text.missing",
+                    "Comment text is required",
+                    null
+            );
+        }
         commentDto.setDeleted(false);
-        commentRepo.save(CommentMapper.toEntity(commentDto));
-        return commentDto;
+        // Return what was persisted, not what was posted: the id and the createdAt
+        // stamp are assigned on write, and the client needs both to render the reply
+        // it just made without re-fetching the page.
+        Comment saved = commentRepo.save(CommentMapper.toEntity(commentDto));
+        return CommentMapper.toDto(saved);
     }
 }

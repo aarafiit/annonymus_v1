@@ -1,24 +1,43 @@
 package com.example.annonymus_v1.config;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.List;
+
 @Configuration
 public class CorsConfig {
+
+    /**
+     * Registered ahead of the rate limit filter so a 429 still carries CORS headers.
+     * Without that ordering a throttled browser client sees an opaque network error
+     * rather than the status and Retry-After it needs to back off correctly.
+     */
     @Bean
-    public CorsFilter corsFilter() {
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        // Cross-origin clients cannot read these unless they are exposed explicitly,
+        // and a limit the client cannot see is a limit it cannot respect.
+        config.setExposedHeaders(List.of(
+                "Retry-After", "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Policy"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+
+        FilterRegistrationBean<CorsFilter> registration =
+                new FilterRegistrationBean<>(new CorsFilter(source));
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registration.addUrlPatterns("/*");
+        registration.setName("corsFilter");
+        return registration;
     }
 }
-

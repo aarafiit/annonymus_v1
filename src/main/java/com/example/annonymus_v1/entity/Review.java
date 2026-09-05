@@ -1,6 +1,7 @@
 package com.example.annonymus_v1.entity;
 
 import com.example.annonymus_v1.enumurator.ReviewType;
+import com.example.annonymus_v1.util.AppTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,7 +44,7 @@ public class Review {
         if (this.id == null) {
             this.id = UUID.randomUUID();
         }
-        this.createdAt = this.updatedAt = LocalDateTime.now();
+        this.createdAt = this.updatedAt = AppTime.now();
         this.deleted = false;
         this.likeCount = 0L;
         this.dislikeCount = 0L;
@@ -51,7 +52,7 @@ public class Review {
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = AppTime.now();
     }
 
 

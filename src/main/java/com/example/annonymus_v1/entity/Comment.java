@@ -1,5 +1,6 @@
 package com.example.annonymus_v1.entity;
 
+import com.example.annonymus_v1.util.AppTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,12 +37,12 @@ public class Comment {
         if (this.id == null) {
             this.id = UUID.randomUUID();
         }
-        this.createdAt = this.updatedAt = LocalDateTime.now();
+        this.createdAt = this.updatedAt = AppTime.now();
     }
 
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = AppTime.now();
     }
 }

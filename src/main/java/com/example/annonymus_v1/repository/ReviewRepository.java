@@ -29,19 +29,32 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
                     review.dislikeCount,
                     review.createdAt,
                     review.updatedAt,
-                    review.deleted
+                    review.deleted,
+                    (SELECT COUNT(comment.id) FROM Comment comment
+                      WHERE comment.reviewId = review.id
+                        AND (comment.deleted = FALSE OR comment.deleted IS NULL))
                 )
                 FROM Review review
                 JOIN Institute institute ON review.instituteId = institute.id
                 WHERE (review.deleted = FALSE OR review.deleted IS NULL)
+                  AND (:instituteId = 0L OR review.instituteId = :instituteId)
                   AND (
                       LOWER(institute.name) LIKE LOWER(CONCAT('%', :searchParam, '%')) OR
                       LOWER(institute.alias) LIKE LOWER(CONCAT('%', :searchParam, '%'))
                   )
                 ORDER BY review.createdAt DESC
             """)
+    /**
+     * @param instituteId narrows the listing to one institute; {@code 0} means every
+     *                    institute. A sentinel rather than a nullable parameter
+     *                    because {@code :param IS NULL} leaves PostgreSQL with
+     *                    nothing to infer the bind type from, and institute ids are
+     *                    generated from 1 so zero can never collide with a real one.
+     *                    Callers pass {@code null} to the service, which translates.
+     */
     Page<ReviewDto> findAllByDeletedIsFalse(
             @Param("searchParam") String searchParam,
+            @Param("instituteId") long instituteId,
             Pageable pageable
     );
 
@@ -87,7 +100,10 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
                     review.dislikeCount,
                     review.createdAt,
                     review.updatedAt,
-                    review.deleted
+                    review.deleted,
+                    (SELECT COUNT(comment.id) FROM Comment comment
+                      WHERE comment.reviewId = review.id
+                        AND (comment.deleted = FALSE OR comment.deleted IS NULL))
                 )
                 FROM Review review
                 JOIN Institute institute ON review.instituteId = institute.id

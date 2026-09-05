@@ -1,10 +1,8 @@
 package com.example.annonymus_v1.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentDto {
+    private UUID id;
     private UUID reviewId;
     private String comment;
     private LocalDateTime createdAt;

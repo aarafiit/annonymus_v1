@@ -21,6 +21,7 @@ public class ReviewMapper {
         dto.setCreatedAt(review.getCreatedAt());
         dto.setUpdatedAt(review.getUpdatedAt());
         dto.setDeleted(review.getDeleted());
+        dto.setCommentCount(0L);
         return dto;
     }
 

@@ -1,9 +1,7 @@
 package com.example.annonymus_v1.mapper;
 
 import com.example.annonymus_v1.dto.CommentDto;
-import com.example.annonymus_v1.dto.InstituteDto;
 import com.example.annonymus_v1.entity.Comment;
-import com.example.annonymus_v1.entity.Institute;
 
 public class CommentMapper {
     public static CommentDto toDto(Comment comment){
@@ -12,6 +10,7 @@ public class CommentMapper {
         }
 
         CommentDto dto = new CommentDto();
+        dto.setId(comment.getId());
         dto.setReviewId(comment.getReviewId());
         dto.setComment(comment.getComment());
         dto.setCreatedAt(comment.getCreatedAt());
@@ -28,8 +27,6 @@ public class CommentMapper {
         Comment comment = new Comment();
         comment.setReviewId(dto.getReviewId());
         comment.setComment(dto.getComment());
-        comment.setCreatedAt(dto.getCreatedAt());
-        comment.setUpdatedAt(dto.getUpdatedAt());
         comment.setDeleted(dto.getDeleted());
         return comment;
     }
